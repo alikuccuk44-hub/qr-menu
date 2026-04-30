@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
     const { password } = await request.json();
-    const correctPassword = process.env.ADMIN_PASSWORD || 'admin';
+    
+    const restaurant = await prisma.restaurant.findFirst();
+    const correctPassword = restaurant?.adminPassword || process.env.ADMIN_PASSWORD || 'admin';
 
     if (password === correctPassword) {
       const response = NextResponse.json({ success: true });

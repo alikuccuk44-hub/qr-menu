@@ -183,9 +183,13 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
 
                 {/* Price Badge - floating on image */}
                 <div style={{ 
-                  position: 'absolute', 
-                  bottom: '-14px', 
-                  right: '16px',
+                   position: 'absolute', 
+                   bottom: '-14px', 
+                   right: '16px',
+                   display: 'flex',
+                   flexDirection: 'column',
+                   alignItems: 'flex-end',
+                   gap: '4px'
                 }}>
                   <span className="price-badge" style={{ 
                     fontSize: '1.1rem', 
@@ -194,6 +198,22 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
                   }}>
                     {product.price} ₺
                   </span>
+                  
+                  {currentLang !== 'tr' && (
+                    <span style={{
+                      background: 'rgba(0,0,0,0.7)',
+                      color: 'white',
+                      padding: '0.2rem 0.6rem',
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      backdropFilter: 'blur(4px)',
+                    }}>
+                      {currentLang === 'en' && `$${(product.price / 34).toFixed(2)}`}
+                      {currentLang === 'de' && `€${(product.price / 36).toFixed(2)}`}
+                      {currentLang === 'ru' && `${(product.price / 0.35).toFixed(0)} ₽`}
+                    </span>
+                  )}
                 </div>
 
                 {/* Sold out overlay */}

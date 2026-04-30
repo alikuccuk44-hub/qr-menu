@@ -51,12 +51,28 @@ export default async function CustomerMenuPage({ params, searchParams }: { param
         <div style={{ position: 'absolute', top: '-40px', left: '-40px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ position: 'absolute', bottom: '-30px', right: '-20px', width: '90px', height: '90px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
         
-        <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '-0.03em', textShadow: '0 2px 8px rgba(0,0,0,0.15)', position: 'relative', zIndex: 1 }}>
-          {restaurant.name}
-        </h1>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', marginTop: '0.4rem', fontWeight: 500, position: 'relative', zIndex: 1 }}>
-          {t.title}
-        </p>
+        {/* Logo and Name */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {restaurant.logoUrl && (
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '20px', 
+              background: 'white', 
+              padding: '8px',
+              marginBottom: '1rem',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+            }}>
+              <img src={restaurant.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+          )}
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '-0.03em', textShadow: '0 2px 8px rgba(0,0,0,0.15)', margin: 0 }}>
+            {restaurant.name}
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', marginTop: '0.4rem', fontWeight: 500 }}>
+            {t.title}
+          </p>
+        </div>
         
         <div style={{ position: 'relative', zIndex: 1, marginTop: '1rem' }}>
           <Suspense fallback={null}>

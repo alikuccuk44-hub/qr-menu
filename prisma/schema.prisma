@@ -8,12 +8,14 @@ datasource db {
 }
 
 model Restaurant {
-  id         String     @id @default(uuid())
-  name       String
-  qrCodeId   String     @unique @default(uuid())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  categories Category[]
+  id            String     @id @default(uuid())
+  name          String
+  logoUrl       String?
+  adminPassword String     @default("admin")
+  qrCodeId      String     @unique @default(uuid())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  categories    Category[]
 }
 
 model Category {

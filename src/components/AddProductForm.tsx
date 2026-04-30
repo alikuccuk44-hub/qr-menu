@@ -45,9 +45,16 @@ export default function AddProductForm({ categories }: { categories: Category[] 
         </div>
         <div style={{ flex: 1, minWidth: '150px' }}>
           <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Kategori *</label>
-          <select name="categoryId" required className="form-input">
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
+          <input 
+            list="categories-list" 
+            name="categoryName" 
+            required 
+            className="form-input" 
+            placeholder="Seçin veya Yazın"
+          />
+          <datalist id="categories-list">
+            {categories.map(c => <option key={c.id} value={c.name} />)}
+          </datalist>
         </div>
       </div>
 

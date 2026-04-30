@@ -1,5 +1,6 @@
-import { prisma } from '@/lib/prisma';
+import { headers } from 'next/headers';
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
 
 export const dynamic = 'force-dynamic';
@@ -8,7 +9,10 @@ export default async function QrCodePage() {
   const restaurant = await prisma.restaurant.findFirst();
   if (!restaurant) return <div>Restoran bulunamadı.</div>;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const protocol = host?.includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
   const menuUrl = `${baseUrl}/qr/${restaurant.qrCodeId}`;
 
   return (
