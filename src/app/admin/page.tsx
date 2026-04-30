@@ -24,11 +24,6 @@ export default async function AdminDashboard() {
           <EditableRestaurantTitle restaurantId={restaurant.id} initialName={restaurant.name} />
           <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem', fontSize: '0.95rem' }}>Yönetici Paneli</p>
         </div>
-        <form action="/api/logout" method="POST">
-          <button type="submit" className="btn btn-secondary" style={{ fontSize: '0.9rem', padding: '0.6rem 1.2rem' }}>
-            🚪 Çıkış Yap
-          </button>
-        </form>
       </div>
 
       {/* Stats Row */}
