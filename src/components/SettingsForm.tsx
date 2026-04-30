@@ -9,9 +9,9 @@ export default function SettingsForm({ restaurantId, currentLogo, currentPrimary
   currentPrimary: string,
   currentBackground: string
 }) {
-  const [logoUrl, setLogoUrl] = useState(currentLogo);
-  const [primaryColor, setPrimaryColor] = useState(currentPrimary);
-  const [backgroundColor, setBackgroundColor] = useState(currentBackground);
+  const [logoUrl, setLogoUrl] = useState(currentLogo || '');
+  const [primaryColor, setPrimaryColor] = useState(currentPrimary || '#e8530e');
+  const [backgroundColor, setBackgroundColor] = useState(currentBackground || '#120c08');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
