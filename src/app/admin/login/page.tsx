@@ -35,13 +35,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      padding: '1.5rem',
+      background: 'var(--background)' 
+    }}>
       <form onSubmit={handleLogin} className="glass-panel animate-fade-up" style={{ padding: '3rem 2.5rem', maxWidth: '420px', width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         
         {/* Icon */}
         <div style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '0.5rem' }}>🔐</div>
         
-        <h2 style={{ textAlign: 'center', fontSize: '1.8rem', fontWeight: 800, background: 'var(--gradient-hero)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+        <h2 style={{ 
+          textAlign: 'center', 
+          fontSize: '1.8rem', 
+          fontWeight: 800, 
+          background: 'var(--gradient-hero)', 
+          WebkitBackgroundClip: 'text', 
+          WebkitTextFillColor: 'transparent', 
+          backgroundClip: 'text',
+          color: 'var(--primary)' 
+        }}>
           Yönetici Girişi
         </h2>
 
