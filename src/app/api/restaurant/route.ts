@@ -22,3 +22,12 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    const restaurant = await prisma.restaurant.findFirst();
+    return NextResponse.json(restaurant);
+  } catch (error) {
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+  }
+}
