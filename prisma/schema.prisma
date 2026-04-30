@@ -8,14 +8,16 @@ datasource db {
 }
 
 model Restaurant {
-  id            String     @id @default(uuid())
-  name          String
-  logoUrl       String?
-  adminPassword String     @default("admin")
-  qrCodeId      String     @unique @default(uuid())
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  categories    Category[]
+  id              String     @id @default(uuid())
+  name            String
+  logoUrl         String?
+  primaryColor    String     @default("#e8530e")
+  backgroundColor String     @default("#120c08")
+  adminPassword   String     @default("admin")
+  qrCodeId        String     @unique @default(uuid())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  categories      Category[]
 }
 
 model Category {

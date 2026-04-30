@@ -37,7 +37,14 @@ export default async function CustomerMenuPage({ params, searchParams }: { param
   if (!restaurant) return notFound();
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--background)', paddingBottom: '4rem' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: restaurant.backgroundColor, 
+      paddingBottom: '4rem',
+      '--primary': restaurant.primaryColor,
+      '--background': restaurant.backgroundColor,
+      '--gradient-hero': `linear-gradient(135deg, ${restaurant.primaryColor} 0%, ${restaurant.primaryColor}dd 100%)`,
+    } as any}>
       
       {/* Vibrant Header */}
       <header style={{ 

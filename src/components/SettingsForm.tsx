@@ -3,8 +3,15 @@
 import { useState } from 'react';
 import ImageUploader from './ImageUploader';
 
-export default function SettingsForm({ restaurantId, currentLogo }: { restaurantId: string, currentLogo: string }) {
+export default function SettingsForm({ restaurantId, currentLogo, currentPrimary, currentBackground }: { 
+  restaurantId: string, 
+  currentLogo: string,
+  currentPrimary: string,
+  currentBackground: string
+}) {
   const [logoUrl, setLogoUrl] = useState(currentLogo);
+  const [primaryColor, setPrimaryColor] = useState(currentPrimary);
+  const [backgroundColor, setBackgroundColor] = useState(currentBackground);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -23,6 +30,8 @@ export default function SettingsForm({ restaurantId, currentLogo }: { restaurant
         body: JSON.stringify({ 
           id: restaurantId, 
           logoUrl,
+          primaryColor,
+          backgroundColor,
           adminPassword: data.adminPassword || undefined
         })
       });
@@ -46,16 +55,28 @@ export default function SettingsForm({ restaurantId, currentLogo }: { restaurant
         
         {/* Logo Section */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Restoran Logosu</h3>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Menü başlığında görünecek olan logonuz.</p>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>🎨 Tasarım ve Logo</h3>
           
-          {logoUrl && (
-            <div style={{ width: '100px', height: '100px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', marginBottom: '0.5rem' }}>
-              <img src={logoUrl} alt="Logo Preview" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#f8f8f8' }} />
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Ana Renk</label>
+              <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} style={{ width: '100%', height: '40px', padding: '2px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer' }} />
             </div>
-          )}
-          
-          <ImageUploader onUpload={setLogoUrl} />
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Arka Plan</label>
+              <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} style={{ width: '100%', height: '40px', padding: '2px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer' }} />
+            </div>
+          </div>
+
+          <div style={{ marginTop: '0.5rem' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Restoran Logosu</label>
+            {logoUrl && (
+              <div style={{ width: '100px', height: '100px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', marginBottom: '0.5rem' }}>
+                <img src={logoUrl} alt="Logo Preview" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#f8f8f8' }} />
+              </div>
+            )}
+            <ImageUploader onUpload={setLogoUrl} />
+          </div>
         </div>
 
         {/* Password Section */}

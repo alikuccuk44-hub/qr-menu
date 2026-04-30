@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function PUT(request: Request) {
   try {
-    const { id, name, logoUrl, adminPassword } = await request.json();
+    const { id, name, logoUrl, adminPassword, primaryColor, backgroundColor } = await request.json();
     if (!id) return NextResponse.json({ error: 'Eksik veri' }, { status: 400 });
 
     const restaurant = await prisma.restaurant.update({
@@ -11,7 +11,9 @@ export async function PUT(request: Request) {
       data: { 
         name: name || undefined,
         logoUrl: logoUrl || undefined,
-        adminPassword: adminPassword || undefined
+        adminPassword: adminPassword || undefined,
+        primaryColor: primaryColor || undefined,
+        backgroundColor: backgroundColor || undefined
       }
     });
 

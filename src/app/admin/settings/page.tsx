@@ -21,6 +21,8 @@ export default async function SettingsPage() {
         <SettingsForm 
           restaurantId={restaurant.id} 
           currentLogo={restaurant.logoUrl || ''} 
+          currentPrimary={restaurant.primaryColor}
+          currentBackground={restaurant.backgroundColor}
         />
       </div>
     </div>
