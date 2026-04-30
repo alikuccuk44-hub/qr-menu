@@ -38,10 +38,23 @@ export default function AdminLayout({
       minHeight: '100vh', 
       display: 'flex', 
       flexDirection: 'column',
-      '--primary': theme.primary,
-      '--background': theme.background,
-      '--gradient-hero': `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primary}dd 100%)`
-    } as any}>
+      background: 'var(--background)'
+    }}>
+      {/* Dinamik Stil Enjeksiyonu */}
+      <style jsx global>{`
+        :root {
+          --primary: ${theme.primary} !important;
+          --primary-hover: ${theme.primary}dd !important;
+          --background: ${theme.background} !important;
+          --gradient-warm: ${theme.background} !important;
+          --gradient-hero: linear-gradient(135deg, ${theme.primary} 0%, ${theme.primary}dd 100%) !important;
+        }
+        body {
+          background: ${theme.background} !important;
+          background-image: none !important;
+        }
+      `}</style>
+
       <header style={{ 
         borderBottom: '1px solid var(--border)', 
         background: 'var(--surface)', 
