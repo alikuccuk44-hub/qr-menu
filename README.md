@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dinamik QR Menü & Yönetim Sistemi
 
-## Getting Started
+Bu proje, restoran ve kafeler için geliştirilmiş, tam otomatik çoklu dil destekli ve modern PWA (Progressive Web App) standartlarına uygun bir Dijital QR Menü uygulamasıdır.
 
-First, run the development server:
+## 🌟 Öne Çıkan Özellikler
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **AI Destekli Otomatik Çeviri:** Yönetici paneline Türkçe eklenen her kategori ve ürün; anında İngilizce, Rusça ve Almanca dillerine otomatik olarak çevrilir. (Google Translate API entegrasyonu).
+- **Gelişmiş Yönetici Paneli:** 
+  - Kategori ve Ürün yönetimi (CRUD işlemleri).
+  - Anlık stok/tükendi durumu güncelleme.
+  - Sürükle-bırak destekli, anında önizlemeli görsel yükleme modülü.
+  - Masalara özel QR Kod oluşturma ve indirme ekranı.
+- **Modern Müşteri Arayüzü:** 
+  - Uygulama hissi veren (app-like) yatay kaydırılabilir kategori sekmeleri.
+  - Ürün görselleri odaklı, animasyonlu şık tasarım.
+  - Cihaz diline göre otomatik veya manuel dil seçimi.
+- **Güvenlik:** Yönetici paneli izinsiz girişleri engelleyen "Session Cookie" mimarisiyle korunmaktadır (Her tarayıcı kapanışında oturum sonlanır).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Kullanılan Teknolojiler
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** Next.js 15 (App Router), React, Vanilla CSS (Glassmorphism & Modern UI)
+- **Backend:** Next.js Server Actions & API Routes
+- **Veritabanı:** Prisma ORM, SQLite
+- **Dosya Yönetimi:** Node.js `fs` modülü ile yerel görsel yükleme
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Kurulum ve Çalıştırma (Lokal Ortam)
 
-## Learn More
+Projeyi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Bağımlılıkları Yükleyin:**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Veritabanını Hazırlayın:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Geliştirme Sunucusunu Başlatın:**
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+4. **Tarayıcıda Açın:**
+   - Müşteri Arayüzü: `http://localhost:3000`
+   - Yönetici Paneli: `http://localhost:3000/admin`
+   - **Varsayılan Admin Şifresi:** `admin`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📱 Ekran Görüntüleri ve Tasarım
+Uygulama baştan aşağı "Appetizing Colors" (İştah açıcı renkler - Turuncu/Coral) paletiyle, modern mikro animasyonlar ve bulanık cam (glassmorphism) efektleriyle tasarlanmıştır. Müşteri menüsü tamamen fotoğraf odaklıdır. Görseli olmayan ürünler için sistem otomatik olarak şık emoji placeholder'ları (🍔, 🍕 vb.) atar.

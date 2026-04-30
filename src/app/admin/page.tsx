@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import EditableRestaurantTitle from '@/components/EditableRestaurantTitle';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,9 +21,7 @@ export default async function AdminDashboard() {
       {/* Header */}
       <div className="animate-fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, background: 'var(--gradient-hero)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-            {restaurant.name}
-          </h1>
+          <EditableRestaurantTitle restaurantId={restaurant.id} initialName={restaurant.name} />
           <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem', fontSize: '0.95rem' }}>Yönetici Paneli</p>
         </div>
         <form action="/api/logout" method="POST">
