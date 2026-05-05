@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { withTimeout } from '@/lib/db-utils';
 import { revalidatePath } from 'next/cache';
 import { translateText } from '@/lib/translate';
 import Link from 'next/link';
@@ -6,14 +7,29 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function CategoriesPage() {
-  const restaurant = await prisma.restaurant.findFirst();
-  if (!restaurant) return <div>Restoran bulunamadı. Lütfen ana panele dönün.</div>;
+  let restaurant;
+  let categories: any[] = [];
 
-  const categories = await prisma.category.findMany({
-    where: { restaurantId: restaurant.id },
-    include: { _count: { select: { products: true } } },
-    orderBy: { createdAt: 'asc' }
-  });
+  try {
+    restaurant = await withTimeout(prisma.restaurant.findFirst(), 800);
+    if (restaurant) {
+      categories = await withTimeout(prisma.category.findMany({
+        where: { restaurantId: restaurant.id },
+        include: { _count: { select: { products: true } } },
+        orderBy: { createdAt: 'asc' }
+      }), 800);
+    }
+  } catch (dbError) {
+    console.warn('⚠️ Kategoriler sayfası veritabanına ulaşamıyor, demo modu aktif.');
+    restaurant = { id: 'demo' };
+    categories = [
+      { id: '1', name: 'Ana Yemekler', nameEn: 'Main Courses', nameRu: 'Основные блюда', nameDe: 'Hauptgerichte', _count: { products: 12 } },
+      { id: '2', name: 'İçecekler', nameEn: 'Drinks', nameRu: 'Напитки', nameDe: 'Getränke', _count: { products: 8 } },
+      { id: '3', name: 'Tatlılar', nameEn: 'Desserts', nameRu: 'Десерты', nameDe: 'Desserts', _count: { products: 5 } },
+    ];
+  }
+
+  if (!restaurant) return <div>Restoran bulunamadı. Lütfen ana panele dönün.</div>;
 
   async function addCategory(formData: FormData) {
     'use server';

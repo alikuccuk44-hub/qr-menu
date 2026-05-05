@@ -1,52 +1,72 @@
-# Dinamik QR Menü & Yönetim Sistemi
+# 🍽️ Dinamik QR Menü & Yönetim Paneli
 
-Bu proje, restoran ve kafeler için geliştirilmiş, tam otomatik çoklu dil destekli ve modern PWA (Progressive Web App) standartlarına uygun bir Dijital QR Menü uygulamasıdır.
+Modern restoranlar, kafeler ve oteller için tasarlanmış, **"World-Class SaaS"** standartlarında, yeni nesil dijital QR Menü ve Yönetim platformu. 
+
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-1B222D?style=for-the-badge&logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?style=for-the-badge&logo=postgresql)
 
 ## 🌟 Öne Çıkan Özellikler
 
-- **AI Destekli Otomatik Çeviri:** Yönetici paneline Türkçe eklenen her kategori ve ürün; anında İngilizce, Rusça ve Almanca dillerine otomatik olarak çevrilir. (Google Translate API entegrasyonu).
-- **Gelişmiş Yönetici Paneli:** 
-  - Kategori ve Ürün yönetimi (CRUD işlemleri).
-  - Anlık stok/tükendi durumu güncelleme.
-  - Sürükle-bırak destekli, anında önizlemeli görsel yükleme modülü.
-  - Masalara özel QR Kod oluşturma ve indirme ekranı.
-- **Modern Müşteri Arayüzü:** 
-  - Uygulama hissi veren (app-like) yatay kaydırılabilir kategori sekmeleri.
-  - Ürün görselleri odaklı, animasyonlu şık tasarım.
-  - Cihaz diline göre otomatik veya manuel dil seçimi.
-- **Güvenlik:** Yönetici paneli izinsiz girişleri engelleyen "Session Cookie" mimarisiyle korunmaktadır (Her tarayıcı kapanışında oturum sonlanır).
+- **Dinamik Tasarım Sistemi:** Restoranlar, yönetici paneli üzerinden kendi kurumsal renklerini (Ana Renk, Arka Plan, Yüzey Rengi) saniyeler içinde belirleyebilir. Uygulamanın tüm arayüzü anında bu renklere bürünür.
+- **Glassmorphism Arayüz:** Müşteri menüsü, derinlik hissi veren buzlu cam (glass) efektleri ve akıcı animasyonlarla "app-like" (uygulama gibi) bir premium deneyim sunar.
+- **Çoklu Dil Desteği:** Tek tıkla Türkçe, İngilizce, Almanca ve Rusça dillerine çeviri imkanı.
+- **Akıllı Para Birimi (Multi-Currency):** Ürün fiyatları TL, USD ve EUR formatında güncel kurlarla (simüle) aynı anda, şık bir rozet (badge) tasarımıyla sunulur.
+- **Bento Grid Admin Dashboard:** İstatistikler ve hızlı işlemler, modern ve derli toplu bir görünüm sunan "Bento Grid" mimarisiyle listelenir.
+- **Gerçek Zamanlı QR Üretimi:** Masalar için tek tıkla yüksek çözünürlüklü QR kodları oluşturma ve indirme.
+- **Resim Yükleme Entegrasyonu:** IMGBB API ile sunucu maliyeti olmadan ürün görsellerini ve restoran logolarını bulutta saklama.
 
-## 🛠️ Kullanılan Teknolojiler
+## 🚀 Teknolojik Altyapı
 
-- **Frontend:** Next.js 15 (App Router), React, Vanilla CSS (Glassmorphism & Modern UI)
-- **Backend:** Next.js Server Actions & API Routes
-- **Veritabanı:** Prisma ORM, SQLite
-- **Dosya Yönetimi:** Node.js `fs` modülü ile yerel görsel yükleme
+Bu proje, yüksek performans ve SEO uyumluluğu için **Next.js (App Router)** kullanılarak geliştirilmiştir.
 
-## 🚀 Kurulum ve Çalıştırma (Lokal Ortam)
+- **Frontend:** React, Next.js, CSS Modules & Variables (Tailwind kullanılmadan saf, özelleştirilebilir CSS mimarisi).
+- **Backend (API):** Next.js Route Handlers.
+- **Veritabanı:** PostgreSQL (Neon Tech Serverless).
+- **ORM:** Prisma.
+- **Görsel Depolama:** ImgBB API.
 
-Projeyi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
+## 🛠️ Kurulum ve Çalıştırma
 
-1. **Bağımlılıkları Yükleyin:**
-   ```bash
-   npm install
-   ```
+Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyin:
 
-2. **Veritabanını Hazırlayın:**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
+### 1. Depoyu Klonlayın
+```bash
+git clone https://github.com/alikuccuk44-hub/qr-menu.git
+cd qr-menu
+```
 
-3. **Geliştirme Sunucusunu Başlatın:**
-   ```bash
-   npm run dev
-   ```
+### 2. Bağımlılıkları Yükleyin
+```bash
+npm install
+```
 
-4. **Tarayıcıda Açın:**
-   - Müşteri Arayüzü: `http://localhost:3000`
-   - Yönetici Paneli: `http://localhost:3000/admin`
-   - **Varsayılan Admin Şifresi:** `admin`
+### 3. Ortam Değişkenlerini (Environment Variables) Ayarlayın
+Ana dizinde `.env` adında bir dosya oluşturun ve veritabanı ile API anahtarlarınızı girin:
+```env
+DATABASE_URL="postgresql://kullanici_adi:sifre@neon_adresi.aws.neon.tech/neondb?sslmode=require"
+IMGBB_API_KEY="sizin_imgbb_api_anahtariniz"
+ADMIN_PASSWORD="admin"
+```
 
-## 📱 Ekran Görüntüleri ve Tasarım
-Uygulama baştan aşağı "Appetizing Colors" (İştah açıcı renkler - Turuncu/Coral) paletiyle, modern mikro animasyonlar ve bulanık cam (glassmorphism) efektleriyle tasarlanmıştır. Müşteri menüsü tamamen fotoğraf odaklıdır. Görseli olmayan ürünler için sistem otomatik olarak şık emoji placeholder'ları (🍔, 🍕 vb.) atar.
+### 4. Veritabanını Hazırlayın
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 5. Uygulamayı Başlatın
+```bash
+npm run dev
+```
+Uygulama `http://localhost:3000` adresinde çalışmaya başlayacaktır.
+
+## 💼 KOBİ'ler (Restoranlar) İçin SaaS Modeline Geçiş
+
+Mevcut proje yapısı **"Dijital Ajans" (Single-Tenant)** modeliyle çalışmaya hazır durumdadır. Her yeni restoran müşteriniz için bu Vercel projesini kopyalayıp (fork) onlara özel bir alan adı (`menu.restoranadi.com`) bağlayabilirsiniz.
+
+Gelecekte sistemi **"Gerçek SaaS" (Multi-Tenant)** modeline taşımak isterseniz; `NextAuth.js` eklenerek ve veritabanı sorguları `restaurantId` filtreleriyle güncellenerek, binlerce restoranın tek bir veritabanı üzerinden yönetilebileceği yapıya kolayca evrilebilir.
+
+---
+*Bu proje modern web standartlarında, performans ve estetik odaklı olarak geliştirilmiştir.*

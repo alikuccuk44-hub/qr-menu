@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { withTimeout } from '@/lib/db-utils';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import AddProductForm from '@/components/AddProductForm';
@@ -6,19 +7,38 @@ import AddProductForm from '@/components/AddProductForm';
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
-  const restaurant = await prisma.restaurant.findFirst();
+  let restaurant;
+  let categories: any[] = [];
+  let products: any[] = [];
+
+  try {
+    restaurant = await withTimeout(prisma.restaurant.findFirst(), 800);
+    if (restaurant) {
+      categories = await withTimeout(prisma.category.findMany({
+        where: { restaurantId: restaurant.id },
+        orderBy: { createdAt: 'asc' }
+      }), 800);
+      products = await withTimeout(prisma.product.findMany({
+        where: { category: { restaurantId: restaurant.id } },
+        include: { category: true },
+        orderBy: { createdAt: 'desc' }
+      }), 800);
+    }
+  } catch (dbError) {
+    console.warn('⚠️ Ürünler sayfası veritabanına ulaşamıyor, demo modu aktif.');
+    restaurant = { id: 'demo' };
+    categories = [
+      { id: '1', name: 'Ana Yemekler' },
+      { id: '2', name: 'İçecekler' }
+    ];
+    products = [
+      { id: '101', name: 'Özel Soslu Burger', nameEn: 'Special Sauce Burger', nameRu: 'Бургер со специальным соусом', nameDe: 'Burger mit Spezialsauce', price: 280, isAvailable: true, category: { name: 'Ana Yemekler' }, imageUrl: null },
+      { id: '102', name: 'Ev Yapımı Limonata', nameEn: 'Homemade Lemonade', nameRu: 'Домашний лимонад', nameDe: 'Hausgemachte Limonade', price: 85, isAvailable: true, category: { name: 'İçecekler' }, imageUrl: null },
+      { id: '103', name: 'Margarita Pizza', nameEn: 'Margarita Pizza', nameRu: 'Пицца Маргарита', nameDe: 'Pizza Margherita', price: 320, isAvailable: false, category: { name: 'Ana Yemekler' }, imageUrl: null },
+    ];
+  }
+
   if (!restaurant) return <div>Restoran bulunamadı.</div>;
-
-  const categories = await prisma.category.findMany({
-    where: { restaurantId: restaurant.id },
-    orderBy: { createdAt: 'asc' }
-  });
-
-  const products = await prisma.product.findMany({
-    where: { category: { restaurantId: restaurant.id } },
-    include: { category: true },
-    orderBy: { createdAt: 'desc' }
-  });
 
   async function deleteProduct(formData: FormData) {
     'use server';

@@ -53,15 +53,17 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
   const [animKey, setAnimKey] = useState(0);
 
   const switchCategory = useCallback((id: string) => {
-    setActiveCategoryId(id);
-    setAnimKey(prev => prev + 1);
-  }, []);
+    if (id !== activeCategoryId) {
+      setActiveCategoryId(id);
+      setAnimKey(prev => prev + 1);
+    }
+  }, [activeCategoryId]);
 
   if (activeCategories.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '5rem 1.5rem', color: 'var(--text-muted)' }}>
-        <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🍽️</div>
-        <p style={{ fontSize: '1.1rem' }}>{t.empty}</p>
+      <div style={{ textAlign: 'center', padding: 'var(--space-3xl) var(--space-lg)', color: 'var(--text-muted)' }}>
+        <div className="animate-float" style={{ fontSize: '4rem', marginBottom: 'var(--space-md)' }}>🍽️</div>
+        <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>{t.empty}</p>
       </div>
     );
   }
@@ -86,19 +88,20 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
 
   return (
     <>
-      {/* Category Tabs */}
+      {/* Category Navigation — Sticky & Glassy */}
       <div className="hide-scrollbar" style={{ 
         display: 'flex', 
         overflowX: 'auto', 
-        gap: '0.5rem', 
-        padding: '0.75rem 1rem',
+        gap: 'var(--space-sm)', 
+        padding: '1rem var(--space-md)',
         position: 'sticky', 
         top: 0, 
-        zIndex: 10,
+        zIndex: 100,
         background: 'var(--surface-glass)',
-        backdropFilter: 'blur(20px) saturate(1.8)',
-        WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
-        borderBottom: '1px solid var(--border)',
+        backdropFilter: 'blur(32px) saturate(1.8)',
+        WebkitBackdropFilter: 'blur(32px) saturate(1.8)',
+        borderBottom: '1px solid var(--border-glass)',
+        boxShadow: 'var(--shadow-xs)'
       }}>
         {activeCategories.map(category => {
           const isActive = activeCategoryId === category.id;
@@ -106,22 +109,8 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
             <button
               key={category.id}
               onClick={() => switchCategory(category.id)}
-              style={{
-                padding: '0.6rem 1.3rem',
-                borderRadius: '100px',
-                border: isActive ? 'none' : '1.5px solid var(--border-glass)',
-                background: isActive ? 'var(--gradient-hero)' : 'var(--surface)',
-                color: isActive ? 'white' : 'var(--text-muted)',
-                fontWeight: isActive ? 700 : 500,
-                fontFamily: 'var(--font-heading)',
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                boxShadow: isActive ? '0 4px 16px rgba(232, 83, 14, 0.35)' : 'none',
-                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                outline: 'none',
-                flexShrink: 0,
-              }}
+              className={isActive ? 'chip chip-active' : 'chip'}
+              style={{ flexShrink: 0 }}
             >
               {getLocalizedName(category)}
             </button>
@@ -129,8 +118,18 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
         })}
       </div>
 
-      {/* Product Grid */}
-      <div key={animKey} style={{ maxWidth: '640px', margin: '0 auto', padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* Product List */}
+      <div 
+        key={animKey} 
+        style={{ 
+          maxWidth: '680px', 
+          margin: '0 auto', 
+          padding: 'var(--space-xl) var(--space-md)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 'var(--space-md)' 
+        }}
+      >
         {activeCategory?.products.map((product, index) => {
           const desc = getLocalizedDescription(product);
           const emoji = getRandomEmoji(product.id);
@@ -140,98 +139,55 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
               key={product.id} 
               className="glass-panel animate-fade-up"
               style={{ 
+                display: 'flex',
                 overflow: 'hidden',
-                animationDelay: `${index * 0.07}s`,
-                opacity: product.isAvailable ? 1 : 0.5,
+                animationDelay: `${index * 0.06}s`,
+                opacity: product.isAvailable ? 1 : 0.65,
+                position: 'relative',
               }}
             >
-              {/* Image Area */}
-              <div style={{ position: 'relative' }}>
+              {/* Product Image Side */}
+              <div style={{ 
+                width: '120px', 
+                flexShrink: 0,
+                position: 'relative',
+                background: 'var(--surface-elevated)'
+              }}>
                 {product.imageUrl ? (
-                  <div style={{ 
-                    width: '100%', 
-                    height: '180px', 
-                    overflow: 'hidden',
-                    backgroundColor: 'var(--border)',
-                  }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name} 
-                      loading="lazy"
-                      decoding="async"
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover',
-                        transition: 'transform 0.4s ease',
-                      }} 
-                    />
-                  </div>
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.name} 
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
                 ) : (
-                  /* Placeholder with emoji and gradient */
                   <div style={{ 
-                    width: '100%', 
-                    height: '140px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, rgba(232,83,14,0.06) 0%, rgba(255,167,38,0.08) 100%)',
-                    borderBottom: '1px solid var(--border)',
+                    width: '100%', height: '100%', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'var(--surface-secondary)',
+                    fontSize: '2.5rem'
                   }}>
-                    <span style={{ fontSize: '4rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.08))' }}>{emoji}</span>
+                    {emoji}
                   </div>
                 )}
 
-                {/* Price Badge - floating on image */}
-                <div style={{ 
-                   position: 'absolute', 
-                   bottom: '-14px', 
-                   right: '16px',
-                   display: 'flex',
-                   flexDirection: 'column',
-                   alignItems: 'flex-end',
-                   gap: '4px'
-                }}>
-                  {/* Multi-currency prices */}
-                  <div style={{
-                    background: 'rgba(0,0,0,0.7)',
-                    color: 'white',
-                    padding: '0.3rem 0.75rem',
-                    borderRadius: '10px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    backdropFilter: 'blur(8px)',
-                    display: 'flex',
-                    gap: '0.75rem',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}>
-                    <span>{product.price} ₺</span>
-                    <span style={{ opacity: 0.8 }}>$ {(product.price / 34).toFixed(1)}</span>
-                    <span style={{ opacity: 0.8 }}>€ {(product.price / 36).toFixed(1)}</span>
-                  </div>
-                </div>
-
-                {/* Sold out overlay */}
+                {/* Sold Out Overlay */}
                 {!product.isAvailable && (
                   <div style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'rgba(0,0,0,0.45)',
+                    background: 'rgba(0,0,0,0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    backdropFilter: 'blur(4px)'
                   }}>
-                    <span style={{
-                      background: 'rgba(211, 47, 47, 0.9)',
+                    <span className="badge badge-danger" style={{ 
+                      fontSize: '0.65rem', 
+                      background: 'rgba(239, 68, 68, 0.9)', 
                       color: 'white',
-                      padding: '0.5rem 1.5rem',
-                      borderRadius: '100px',
-                      fontWeight: 800,
-                      fontFamily: 'var(--font-heading)',
-                      fontSize: '1rem',
-                      letterSpacing: '0.05em',
-                      textTransform: 'uppercase',
+                      border: 'none'
                     }}>
                       {t.soldOut}
                     </span>
@@ -239,28 +195,56 @@ export default function CustomerMenuTabs({ categories, currentLang, t }: Props) 
                 )}
               </div>
 
-              {/* Content Area */}
-              <div style={{ padding: '1.25rem 1.25rem 1.25rem', marginTop: '0.25rem' }}>
-                <h3 style={{ 
-                  fontSize: '1.15rem', 
-                  fontWeight: 700, 
-                  margin: 0, 
-                  color: 'var(--foreground)', 
-                  lineHeight: 1.3,
-                }}>
-                  {getLocalizedName(product)}
-                </h3>
-                
-                {desc && (
-                  <p style={{ 
-                    color: 'var(--text-muted)', 
-                    fontSize: '0.9rem', 
-                    marginTop: '0.5rem', 
-                    lineHeight: 1.6,
+              {/* Product Info Side */}
+              <div style={{ 
+                flex: 1, 
+                padding: 'var(--space-md)', 
+                display: 'flex', 
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                minWidth: 0,
+                gap: 'var(--space-sm)'
+              }}>
+                <div>
+                  <h3 style={{ 
+                    fontSize: '1.05rem', 
+                    fontWeight: 700, 
+                    margin: 0, 
+                    color: 'var(--text-primary)',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 1,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    letterSpacing: '-0.01em'
                   }}>
-                    {desc}
-                  </p>
-                )}
+                    {getLocalizedName(product)}
+                  </h3>
+                  
+                  {desc && (
+                    <p style={{ 
+                      color: 'var(--text-secondary)', 
+                      fontSize: '0.85rem', 
+                      marginTop: '6px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      lineHeight: 1.5
+                    }}>
+                      {desc}
+                    </p>
+                  )}
+                </div>
+
+                {/* Multi-Currency Price Badge */}
+                <div style={{ alignSelf: 'flex-end', marginTop: 'var(--space-xs)' }}>
+                  <div className="price-badge">
+                    <span>{product.price.toLocaleString('tr-TR')} ₺</span>
+                    <span className="sub-price">
+                      ${(product.price / 34).toFixed(1)} <span style={{ opacity: 0.5, margin: '0 2px' }}>•</span> €{(product.price / 36).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           );

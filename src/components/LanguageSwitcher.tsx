@@ -29,27 +29,29 @@ export default function LanguageSwitcher() {
     <div style={{ 
       display: 'inline-flex', 
       gap: '0.25rem', 
-      background: 'rgba(255,255,255,0.15)', 
+      background: 'var(--surface-secondary)', 
       padding: '0.3rem', 
       borderRadius: '12px',
-      backdropFilter: 'blur(8px)'
+      border: '1px solid var(--border)',
+      boxShadow: 'var(--shadow-sm)',
     }}>
       {languages.map(lang => (
         <button
           key={lang.code}
           onClick={() => changeLanguage(lang.code)}
           style={{
-            background: currentLang === lang.code ? 'rgba(255,255,255,0.95)' : 'transparent',
+            background: currentLang === lang.code ? 'var(--surface)' : 'transparent',
             border: 'none',
             borderRadius: '10px',
             fontSize: '0.85rem',
             fontWeight: 700,
             fontFamily: 'var(--font-heading)',
-            color: currentLang === lang.code ? 'var(--primary)' : 'rgba(255,255,255,0.7)',
+            color: currentLang === lang.code ? 'var(--primary)' : 'var(--text-muted)',
             cursor: 'pointer',
             padding: '0.4rem 0.75rem',
             transition: 'all 0.25s ease',
-            letterSpacing: '0.03em'
+            letterSpacing: '0.03em',
+            boxShadow: currentLang === lang.code ? 'var(--shadow-sm)' : 'none'
           }}
           title={lang.code.toUpperCase()}
         >

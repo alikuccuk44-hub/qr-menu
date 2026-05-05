@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { withTimeout } from '@/lib/db-utils';
 import Link from 'next/link';
 import SettingsForm from '@/components/SettingsForm';
 
@@ -6,6 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
   const restaurant = await prisma.restaurant.findFirst();
+
   if (!restaurant) return <div>Restoran bulunamadı.</div>;
 
   return (
@@ -23,6 +25,7 @@ export default async function SettingsPage() {
           currentLogo={restaurant.logoUrl || ''} 
           currentPrimary={restaurant.primaryColor}
           currentBackground={restaurant.backgroundColor}
+          currentSurface={restaurant.surfaceColor}
         />
       </div>
     </div>

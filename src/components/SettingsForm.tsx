@@ -1,19 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ImageUploader from './ImageUploader';
 
-export default function SettingsForm({ restaurantId, currentLogo, currentPrimary, currentBackground }: { 
+export default function SettingsForm({ restaurantId, currentLogo, currentPrimary, currentBackground, currentSurface }: { 
   restaurantId: string, 
   currentLogo: string,
   currentPrimary: string,
-  currentBackground: string
+  currentBackground: string,
+  currentSurface: string
 }) {
   const [logoUrl, setLogoUrl] = useState(currentLogo || '');
   const [primaryColor, setPrimaryColor] = useState(currentPrimary || '#e8530e');
-  const [backgroundColor, setBackgroundColor] = useState(currentBackground || '#120c08');
+  const [backgroundColor, setBackgroundColor] = useState(currentBackground || '#ffffff');
+  const [surfaceColor, setSurfaceColor] = useState(currentSurface || '#1a1a1a');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,12 +36,14 @@ export default function SettingsForm({ restaurantId, currentLogo, currentPrimary
           logoUrl,
           primaryColor,
           backgroundColor,
+          surfaceColor,
           adminPassword: data.adminPassword || undefined
         })
       });
 
       if (res.ok) {
         setMessage('✅ Ayarlar başarıyla kaydedildi.');
+        router.refresh();
       } else {
         setMessage('❌ Bir hata oluştu.');
       }
@@ -65,6 +71,10 @@ export default function SettingsForm({ restaurantId, currentLogo, currentPrimary
             <div style={{ flex: 1 }}>
               <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Arka Plan</label>
               <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} style={{ width: '100%', height: '40px', padding: '2px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer' }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Admin Panel / Menü Kartı Rengi</label>
+              <input type="color" value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} style={{ width: '100%', height: '40px', padding: '2px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer' }} />
             </div>
           </div>
 

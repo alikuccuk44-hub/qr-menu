@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { withTimeout } from '@/lib/db-utils';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
@@ -6,7 +7,15 @@ import QRCodeDisplay from '@/components/QRCodeDisplay';
 export const dynamic = 'force-dynamic';
 
 export default async function QrCodePage() {
-  const restaurant = await prisma.restaurant.findFirst();
+  let restaurant;
+
+  try {
+    restaurant = await withTimeout(prisma.restaurant.findFirst(), 800);
+  } catch (dbError) {
+    console.warn('⚠️ QR sayfası veritabanına ulaşamıyor, demo modu aktif.');
+    restaurant = { id: 'demo', qrCodeId: 'demo-qr' };
+  }
+
   if (!restaurant) return <div>Restoran bulunamadı.</div>;
 
   const headersList = await headers();

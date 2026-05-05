@@ -5,8 +5,18 @@ export async function POST(request: Request) {
   try {
     const { password } = await request.json();
     
-    const restaurant = await prisma.restaurant.findFirst();
-    const correctPassword = restaurant?.adminPassword || process.env.ADMIN_PASSWORD || 'admin';
+    // Varsayılan şifre (Safe Mode)
+    let correctPassword = process.env.ADMIN_PASSWORD || 'admin';
+    
+    try {
+      // Veritabanından gerçek şifreyi çekmeye çalış
+      const restaurant = await prisma.restaurant.findFirst();
+      if (restaurant?.adminPassword) {
+        correctPassword = restaurant.adminPassword;
+      }
+    } catch (dbError) {
+      console.warn('⚠️ Veritabanına ulaşılamıyor, .env şifresiyle devam ediliyor.');
+    }
 
     if (password === correctPassword) {
       const response = NextResponse.json({ success: true });
@@ -24,8 +34,9 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   } catch (error) {
+    console.error('Giriş Hatası Detayı:', error);
     return NextResponse.json(
-      { error: 'Sunucu hatası' },
+      { error: 'Sistem Hatası: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata') },
       { status: 500 }
     );
   }

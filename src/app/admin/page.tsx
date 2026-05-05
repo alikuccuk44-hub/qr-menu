@@ -1,70 +1,165 @@
-import { prisma } from '@/lib/prisma';
+import { getRestaurant, getCategories, getProducts } from '@/lib/cached-data';
 import Link from 'next/link';
 import EditableRestaurantTitle from '@/components/EditableRestaurantTitle';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-  let restaurant = await prisma.restaurant.findFirst();
+  const restaurant = await getRestaurant();
+  
   if (!restaurant) {
-    restaurant = await prisma.restaurant.create({
-      data: { name: 'Benim Restoranım' }
-    });
+    return (
+      <div style={{ padding: '2rem' }}>
+        <h2>Restoran bulunamadı.</h2>
+        <p>Lütfen veritabanı bağlantınızı kontrol edin.</p>
+      </div>
+    );
   }
 
-  const categoryCount = await prisma.category.count({ where: { restaurantId: restaurant.id } });
-  const productCount = await prisma.product.count({ where: { category: { restaurantId: restaurant.id } } });
+  const [categories, products] = await Promise.all([
+    getCategories(restaurant.id),
+    getProducts(restaurant.id)
+  ]);
+
+  const stats = [
+    { icon: '📋', value: categories.length, label: 'Kategori' },
+    { icon: '🍕', value: products.length, label: 'Ürün' },
+    { icon: '🌍', value: 4, label: 'Dil Seçeneği' },
+    { icon: '💱', value: 3, label: 'Para Birimi' },
+  ];
 
   return (
-    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
-      
-      {/* Header */}
-      <div className="animate-fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <EditableRestaurantTitle restaurantId={restaurant.id} initialName={restaurant.name} />
-          <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem', fontSize: '0.95rem' }}>Yönetici Paneli</p>
-        </div>
+    <div style={{ padding: 'var(--space-2xl) var(--space-xl)', maxWidth: '1000px', margin: '0 auto' }}>
+      <div className="animate-fade-up" style={{ marginBottom: 'var(--space-2xl)' }}>
+        <EditableRestaurantTitle restaurantId={restaurant.id} initialName={restaurant.name} />
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: 'var(--space-xs)', fontWeight: 500 }}>
+          Yönetici Paneline hoş geldiniz.
+        </p>
       </div>
 
-      {/* Stats Row */}
-      <div className="animate-fade-up" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', animationDelay: '0.1s' }}>
-        <div className="glass-panel" style={{ flex: 1, minWidth: '140px', padding: '1.25rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)', fontFamily: 'var(--font-heading)' }}>{categoryCount}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: '0.25rem' }}>Kategori</div>
-        </div>
-        <div className="glass-panel" style={{ flex: 1, minWidth: '140px', padding: '1.25rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)', fontFamily: 'var(--font-heading)' }}>{productCount}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: '0.25rem' }}>Ürün</div>
-        </div>
-        <div className="glass-panel" style={{ flex: 1, minWidth: '140px', padding: '1.25rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--success)', fontFamily: 'var(--font-heading)' }}>4</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: '0.25rem' }}>Dil Desteği</div>
-        </div>
-      </div>
+      {/* Bento Grid Architecture */}
+      <div 
+        className="animate-fade-up"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(12, 1fr)',
+          gap: 'var(--space-md)',
+          gridAutoRows: 'minmax(140px, auto)',
+        }}
+      >
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media (max-width: 1024px) {
+            .bento-item-large { grid-column: span 12 !important; }
+            .bento-item-medium { grid-column: span 6 !important; }
+            .bento-item-small { grid-column: span 6 !important; }
+          }
+          @media (max-width: 640px) {
+            .bento-item-medium { grid-column: span 12 !important; }
+            .bento-item-small { grid-column: span 12 !important; }
+          }
+        `}} />
 
-      {/* Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-
-        <div className="glass-panel admin-card animate-fade-up" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: '0.2s' }}>
-          <div style={{ fontSize: '2.5rem' }}>📋</div>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Kategoriler</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, flex: 1 }}>Menü kategorilerinizi ekleyin ve düzenleyin. Otomatik çeviri ile tüm dillerde yayınlayın.</p>
-          <Link href="/admin/categories" className="btn btn-primary" style={{ alignSelf: 'flex-start', padding: '0.7rem 1.5rem', fontSize: '0.95rem' }}>Yönet →</Link>
+        {/* Highlight Action (QR Code) - Spans 8 columns */}
+        <div className="bento-card bento-item-large" style={{ 
+          gridColumn: 'span 8', 
+          gridRow: 'span 2', 
+          background: 'var(--gradient-hero)',
+          color: 'var(--text-inverse)',
+          padding: 'var(--space-2xl)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          border: 'none'
+        }}>
+          <div>
+            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: 'var(--space-xl)' }}>📱</div>
+            <h2 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'white', marginBottom: 'var(--space-sm)' }}>QR Kodunuz Hazır</h2>
+            <p style={{ fontSize: '1.05rem', opacity: 0.9, maxWidth: '400px', lineHeight: 1.6 }}>Müşterilerinizin menüye hızlıca ulaşabilmesi için QR kodlarınızı masalara yerleştirin.</p>
+          </div>
+          <Link href="/admin/qr" style={{ 
+            alignSelf: 'flex-start', 
+            background: 'white', 
+            color: 'var(--primary)', 
+            padding: '0.8rem 1.5rem', 
+            borderRadius: 'var(--radius-pill)', 
+            fontWeight: 700, 
+            fontSize: '0.95rem',
+            marginTop: 'var(--space-xl)',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+            transition: 'transform var(--transition-fast)',
+            display: 'inline-block'
+          }}>
+            QR Kod Oluştur →
+          </Link>
         </div>
 
-        <div className="glass-panel admin-card animate-fade-up" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: '0.3s' }}>
-          <div style={{ fontSize: '2.5rem' }}>🍕</div>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Ürünler</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, flex: 1 }}>Ürün ekleyin, fiyatları güncelleyin ve stok durumunu anlık olarak yönetin.</p>
-          <Link href="/admin/products" className="btn btn-primary" style={{ alignSelf: 'flex-start', padding: '0.7rem 1.5rem', fontSize: '0.95rem' }}>Yönet →</Link>
+        {/* Stats Grid - Spans 4 columns */}
+        <div className="bento-item-large" style={{ 
+          gridColumn: 'span 4', 
+          gridRow: 'span 2',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '1fr 1fr',
+          gap: 'var(--space-md)'
+        }}>
+          {stats.map((stat, i) => (
+            <div key={i} className="bento-card" style={{ 
+              padding: 'var(--space-lg)', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              textAlign: 'center',
+              background: 'var(--surface-secondary)'
+            }}>
+              <div style={{ fontSize: '1.6rem', marginBottom: 'var(--space-xs)', opacity: 0.8 }}>{stat.icon}</div>
+              <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 'var(--space-xs)' }}>{stat.label}</div>
+            </div>
+          ))}
         </div>
 
-        <div className="glass-panel admin-card animate-fade-up" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: '0.4s' }}>
-          <div style={{ fontSize: '2.5rem' }}>📱</div>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>QR Kod İşlemleri</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, flex: 1 }}>Masalarınıza yerleştireceğiniz QR kodu oluşturun ve indirin.</p>
-          <Link href="/admin/qr" className="btn btn-primary" style={{ alignSelf: 'flex-start', padding: '0.7rem 1.5rem', fontSize: '0.95rem' }}>Oluştur →</Link>
-        </div>
+        {/* Action: Categories - Spans 4 columns */}
+        <Link href="/admin/categories" className="bento-card bento-item-medium" style={{ 
+          gridColumn: 'span 4', 
+          padding: 'var(--space-xl)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          textDecoration: 'none'
+        }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--surface-secondary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: 'var(--space-lg)' }}>📋</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 'var(--space-xs)' }}>Kategoriler</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, flex: 1 }}>Menü kategorilerini ve sıralamasını yönetin.</p>
+          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', marginTop: 'var(--space-md)' }}>Yönet →</div>
+        </Link>
+
+        {/* Action: Products - Spans 4 columns */}
+        <Link href="/admin/products" className="bento-card bento-item-medium" style={{ 
+          gridColumn: 'span 4', 
+          padding: 'var(--space-xl)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          textDecoration: 'none'
+        }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--surface-secondary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: 'var(--space-lg)' }}>🍕</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 'var(--space-xs)' }}>Ürünler</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, flex: 1 }}>Ürün detaylarını, görsellerini ve fiyatlarını düzenleyin.</p>
+          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', marginTop: 'var(--space-md)' }}>Yönet →</div>
+        </Link>
+
+        {/* Action: Settings - Spans 4 columns */}
+        <Link href="/admin/settings" className="bento-card bento-item-medium" style={{ 
+          gridColumn: 'span 4', 
+          padding: 'var(--space-xl)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          textDecoration: 'none'
+        }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--surface-secondary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: 'var(--space-lg)' }}>⚙️</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 'var(--space-xs)' }}>Ayarlar</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, flex: 1 }}>Restoran ismini ve görünüm renklerini değiştirin.</p>
+          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', marginTop: 'var(--space-md)' }}>Düzenle →</div>
+        </Link>
 
       </div>
     </div>
