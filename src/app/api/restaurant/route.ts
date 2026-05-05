@@ -19,7 +19,7 @@ export async function PUT(request: Request) {
       }
     });
 
-    revalidateTag('restaurant');
+    revalidateTag('restaurant', 'max');
 
     return NextResponse.json(restaurant);
   } catch (error) {
